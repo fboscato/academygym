@@ -7,13 +7,14 @@ import { Button } from '@components/Button'
 export function SignUp() {
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-      <VStack flex={1} bg='gray.700' padding={10} pb={16}>
+      <VStack flex={1} padding={10} pb={16}>
         <Image
           source={BackgroundImg}
           alt='Pessoa treinando'
           resizeMode='contain'
           position="absolute"
-          style={{ width: 755, height: 755 }}
+
+
         />
         <Center my={24}>
           <LogoSvg />
@@ -26,9 +27,9 @@ export function SignUp() {
             Crie sua conta
           </Heading>
           <Input
-            placeholder='Nome'            
+            placeholder='Nome'
           />
-           <Input
+          <Input
             placeholder='E-mail'
             keyboardType='email-address'
             autoCapitalize='none'
@@ -39,7 +40,7 @@ export function SignUp() {
           />
           <Button title='Criar e acessar' />
         </Center>
-        <Button title='Voltar e acessar' variant="outline" mt={24}/>
+        <Button title='Voltar e acessar' variant="outline" mt={24} />
 
       </VStack>
     </ScrollView>

@@ -7,13 +7,13 @@ import { Button } from '@components/Button'
 export function SignIn() {
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-      <VStack flex={1} bg='gray.700' padding={10} pb={16}>
+      <VStack flex={1}  padding={10} pb={16}>
         <Image
           source={BackgroundImg}
           alt='Pessoa treinando'
           resizeMode='contain'
           position="absolute"
-          style={{ width: 755, height: 755 }}
+          ml={6}
         />
         <Center my={24}>
           <LogoSvg />
