@@ -46,7 +46,7 @@ function handleNewAccoint(){
           <Text color="gray.100" fontSize='sm' mb={3} fontFamily={'body'}>
             Aunda não tem acesso?
           </Text>
-          <Button title='Criar Conta' variant="outline" />
+          <Button title='Criar Conta' variant="outline" onPress={handleNewAccoint}/>
         </Center>
       </VStack>
     </ScrollView>
