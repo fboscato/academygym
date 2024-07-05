@@ -1,5 +1,5 @@
 import { VStack, Image, Center, Text, Heading, ScrollView } from 'native-base'
-import BackgroundImg from '@assets/background.png'
+import BackgroundImg from '@assets/background3.png'
 import LogoSvg from '../assets/logo.svg'
 import { Input } from '@components/Input'
 import { Button } from '@components/Button'
