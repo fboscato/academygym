@@ -9,8 +9,8 @@ export function Routes() {
   return (
     <Box flex={1} bg={"gray.700"}>
       <NavigationContainer theme={theme}>
-        {/* <AuthRouter /> */}
-        <AppRoutes/>
+        <AuthRouter />
+        {/* <AppRoutes/> */}
       </NavigationContainer>
     </Box>
   )

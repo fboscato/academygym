@@ -36,9 +36,7 @@ export function Profile() {
             placement: 'top',
             bg: "red.500",
           })
-
         }
-
         setUserPhoto(photoSelected.assets[0].uri)
       }
     } catch (error) {
