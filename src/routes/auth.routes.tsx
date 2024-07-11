@@ -6,7 +6,9 @@ type AuthRoutes ={
   singUp: undefined,
 }
 export type AuthNavigatorRoutesProps = NativeStackNavigationProp<AuthRoutes>
+
 const {Navigator,Screen} = createNativeStackNavigator<AuthRoutes>()
+
 export function AuthRouter(){
   return (
     <Navigator screenOptions={{headerShown:false}}>
