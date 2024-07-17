@@ -1,4 +1,4 @@
-import { VStack, Image, Center, Text, Heading, ScrollView } from 'native-base'
+import { VStack, Image, Center, Text, Heading, ScrollView,useToast } from 'native-base'
 import BackgroundImg from '@assets/background3.png'
 import LogoSvg from '../assets/logo.svg'
 import { Input } from '@components/Input'
@@ -8,8 +8,8 @@ import { useNavigation } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { api } from '@services/api'
-import axios from 'axios'
-import { Alert } from 'react-native'
+
+import { AppErro } from '@utils/AppError'
 type FormDataProps = {
   name: string
   email: string
@@ -24,7 +24,7 @@ const singUpSchema = yup.object({
 })
 
 export function SignUp() {
-
+  const toust = useToast()
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
     resolver: yupResolver(singUpSchema)
   })
@@ -38,9 +38,13 @@ export function SignUp() {
       const reposta = await api.post('/users', { name, email, password })
 
     } catch (error) {
-      if(axios.isAxiosError(error)){
-       Alert.alert(error.response?.data.message)
-      }
+      const isAppError = error instanceof AppErro
+      const title = isAppError ? error.menssage: 'Não foi possivel criar a conta. Tente novamente mais tarde.'
+      toust.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500'
+      })
     }
   }
   return (
