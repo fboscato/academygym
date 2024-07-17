@@ -6,24 +6,26 @@ import { Button } from '@components/Button'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigation } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form';
-import * as yup  from 'yup';
-
+import * as yup from 'yup';
+import { api } from '@services/api'
+import axios from 'axios'
+import { Alert } from 'react-native'
 type FormDataProps = {
   name: string
   email: string
   password: string
   password_confirm: string
 }
-const  singUpSchema = yup.object({
+const singUpSchema = yup.object({
   name: yup.string().required('Informe o nome'),
   email: yup.string().required('Iforme o E-Mail').email('E-Mail invalido'),
-  password: yup.string().required('Informe a senha').min(6,'A senha deve ter pelo menos 6 digitos'),
-  password_confirm: yup.string().required('Informe a senha').oneOf([yup.ref('password')],'A confirmação da senha não confere')
+  password: yup.string().required('Informe a senha').min(6, 'A senha deve ter pelo menos 6 digitos'),
+  password_confirm: yup.string().required('Informe a senha').oneOf([yup.ref('password')], 'A confirmação da senha não confere')
 })
 
 export function SignUp() {
 
-  const { control,handleSubmit,formState:{errors} } = useForm<FormDataProps>({
+  const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
     resolver: yupResolver(singUpSchema)
   })
   const navigation = useNavigation();
@@ -31,9 +33,15 @@ export function SignUp() {
   function handleGoBack() {
     navigation.goBack();
   }
-  function handleSingUp({name}:FormDataProps) {
-    console.log(name)
+  async function handleSingUp({ name, email, password }: FormDataProps) {
+    try {
+      const reposta = await api.post('/users', { name, email, password })
 
+    } catch (error) {
+      if(axios.isAxiosError(error)){
+       Alert.alert(error.response?.data.message)
+      }
+    }
   }
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
@@ -60,7 +68,7 @@ export function SignUp() {
           </Heading>
           <Controller
             control={control}
-            name='name'         
+            name='name'
             render={({ field: { onChange, value } }) => (
               <Input
                 placeholder='Nome'
@@ -69,10 +77,10 @@ export function SignUp() {
                 errorMessage={errors.name?.message}
               />
             )}
-          />      
+          />
           <Controller
             control={control}
-            name='email'          
+            name='email'
             render={({ field: { onChange, value } }) => (
               <Input
                 placeholder='E-mail'
@@ -97,7 +105,7 @@ export function SignUp() {
               />
 
             )}
-          />        
+          />
           <Controller
             control={control}
             name='password_confirm'
@@ -114,7 +122,7 @@ export function SignUp() {
 
             )}
           />
-          <Button title='Criar e acessar' onPress={handleSubmit(handleSingUp)}/>
+          <Button title='Criar e acessar' onPress={handleSubmit(handleSingUp)} />
         </Center>
         <Button
           title='Voltar e acessar'
