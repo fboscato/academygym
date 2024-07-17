@@ -16,7 +16,7 @@ type FormDataProps = {
 }
 const  singUpSchema = yup.object({
   name: yup.string().required('Informe o nome'),
-  email: yup.string().required('Iforme o Email').email('E-Mail invalido'),
+  email: yup.string().required('Iforme o E-Mail').email('E-Mail invalido'),
   password: yup.string().required('Informe a senha').min(6,'A senha deve ter pelo menos 6 digitos'),
   password_confirm: yup.string().required('Informe a senha').oneOf([yup.ref('password')],'A confirmação da senha não confere')
 })
@@ -114,13 +114,12 @@ export function SignUp() {
 
             )}
           />
-
           <Button title='Criar e acessar' onPress={handleSubmit(handleSingUp)}/>
         </Center>
         <Button
           title='Voltar e acessar'
           variant="outline"
-          mt={24}
+          mt={12}
           onPress={handleGoBack} />
 
       </VStack>
