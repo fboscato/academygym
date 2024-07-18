@@ -10,6 +10,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAuth } from '@hooks/useAuth'
 import { AppErro } from '@utils/AppError';
+import { useState } from 'react';
 
 type FormData = {
   email: string
@@ -22,6 +23,7 @@ const singInSchema = yup.object({
 })
 
 export function SignIn() {
+  const [isLoading, setIsLoading] = useState(false); 
   const { singIn } = useAuth()
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
   const toast = useToast()
@@ -33,18 +35,21 @@ export function SignIn() {
   }
   async function handleSinIn({ email, password }: FormData) {
     try {
+      setIsLoading(true);
       await singIn(email, password)
       console.log("vem")
     } catch (error) {
       const isAppError = error instanceof AppErro
       console.log("error", error)
       const title = isAppError ? error.menssage : 'Usuaro ou senha esta errado'
+      setIsLoading(false);
       toast.show({
         title,
         placement: 'top',
         bgColor: 'red.500'
 
       })
+
     }
   }
 
@@ -107,7 +112,9 @@ export function SignIn() {
               )}
             >
             </Controller>
-            <Button title="Acessar" onPress={handleSubmit(handleSinIn)} />
+            <Button title="Acessar" onPress={handleSubmit(handleSinIn)}
+              isLoading={isLoading}
+            />
           </Center>
           <Center mt={24}>
             <Text color="gray.100" fontSize="sm" mb={3} fontFamily="body">
