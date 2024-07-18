@@ -9,7 +9,7 @@ class UsersController {
     if (!name || !email || !password) {
       throw new AppError("Informe todos os campos (nome, email e senha).");
     }
-
+    console.log(name ,email, password)
     const checkUserExists = await knex("users").where({ email }).first();
 
     if (checkUserExists) {
@@ -17,7 +17,7 @@ class UsersController {
     }
 
     const hashedPassword = await hash(password, 8);
-
+console.log("vem aqui ")
     await knex("users").insert({
       name,
       email,
@@ -61,8 +61,8 @@ class UsersController {
 
       user.password = await hash(password, 8);
     }
-
-    await knex("users").where({ id: user_id }).update(user);
+console.log("Verific",user_id)
+    await knex("users").where({ id: user_id?user_id:1 }).update(user);
 
     return response.json();
   }

@@ -1,34 +1,52 @@
 import { useNavigation } from '@react-navigation/native';
-import { VStack, Image, Center, Text, Heading, ScrollView, Box } from 'native-base';
+import { VStack, Image, Center, Text, Heading, ScrollView, Box, useToast } from 'native-base';
 import * as yup from 'yup';
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes';
-
 import LogoSvg from '../assets/logo.svg';
 import BackgroundImg from '@assets/background3.png';
-
 import { Input } from '@components/Input';
 import { Button } from '@components/Button';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-type FormDataProps = {
+import { useAuth } from '@hooks/useAuth'
+import { AppErro } from '@utils/AppError';
+
+type FormData = {
   email: string
-  senha: string
+  password: string
 }
 
 const singInSchema = yup.object({
   email: yup.string().required('Informe o E-Mail'),
-  senha: yup.string().required('Informe a senha').min(6, 'A senha deve ter pelo menos 6 digitos'),
+  password: yup.string().required('Informe a senha').min(6, 'A senha deve ter pelo menos 6 digitos'),
 })
 
 export function SignIn() {
+  const { singIn } = useAuth()
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
-  const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
+  const toast = useToast()
+  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: yupResolver(singInSchema)
   })
   function handleNewAccount() {
     navigation.navigate('singUp');
   }
-  function handleSinIn() {}
+  async function handleSinIn({ email, password }: FormData) {
+    try {
+      await singIn(email, password)
+      console.log("vem")
+    } catch (error) {
+      const isAppError = error instanceof AppErro
+      console.log("error", error)
+      const title = isAppError ? error.menssage : 'Usuaro ou senha esta errado'
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500'
+
+      })
+    }
+  }
 
   return (
     <Box flex={1} position="relative">
@@ -60,6 +78,7 @@ export function SignIn() {
             <Controller
               control={control}
               name='email'
+              rules={{ required: 'Informe o e-mail' }}
               render={({ field: { onChange, value } }) => (
                 <Input
                   placeholder="E-mail"
@@ -74,7 +93,8 @@ export function SignIn() {
             </Controller>
             <Controller
               control={control}
-              name='senha'
+              name='password'
+              rules={{ required: 'Informe a senha' }}
               render={({ field: { onChange, value } }) => (
                 <Input
                   placeholder="Senha"

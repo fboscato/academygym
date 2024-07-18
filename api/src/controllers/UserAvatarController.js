@@ -5,7 +5,7 @@ class UserAvatarController {
   async update(request, response) {
     const user_id = request.user.id;
     const avatarFilename = request.file.filename;
-
+    console.log("UserAvatarController")
     const diskStorage = new DiskStorage();
 
     const user = await knex("users").where({ id: user_id }).first();
