@@ -1,4 +1,4 @@
-import { VStack, Image, Center, Text, Heading, ScrollView,useToast } from 'native-base'
+import { VStack, Image, Center, Text, Heading, ScrollView, useToast } from 'native-base'
 import BackgroundImg from '@assets/background3.png'
 import LogoSvg from '../assets/logo.svg'
 import { Input } from '@components/Input'
@@ -10,6 +10,8 @@ import * as yup from 'yup';
 import { api } from '@services/api'
 
 import { AppErro } from '@utils/AppError'
+import { useState } from 'react'
+import { useAuth } from '@hooks/useAuth'
 type FormDataProps = {
   name: string
   email: string
@@ -24,6 +26,8 @@ const singUpSchema = yup.object({
 })
 
 export function SignUp() {
+  const {singIn} = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
   const toust = useToast()
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
     resolver: yupResolver(singUpSchema)
@@ -35,11 +39,13 @@ export function SignUp() {
   }
   async function handleSingUp({ name, email, password }: FormDataProps) {
     try {
-      const reposta = await api.post('/users', { name, email, password })
+      setIsLoading(true);
+      await api.post('/users', { name, email, password })
+      await singIn(email, password)
 
     } catch (error) {
       const isAppError = error instanceof AppErro
-      const title = isAppError ? error.menssage: 'Não foi possivel criar a conta. Tente novamente mais tarde.'
+      const title = isAppError ? error.menssage : 'Não foi possivel criar a conta. Tente novamente mais tarde.'
       toust.show({
         title,
         placement: 'top',
@@ -126,7 +132,11 @@ export function SignUp() {
 
             )}
           />
-          <Button title='Criar e acessar' onPress={handleSubmit(handleSingUp)} />
+          <Button
+            title='Criar e acessar'
+            onPress={handleSubmit(handleSingUp)}
+            isLoading={isLoading}
+          />
         </Center>
         <Button
           title='Voltar e acessar'
