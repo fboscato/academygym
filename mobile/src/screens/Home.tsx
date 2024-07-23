@@ -3,16 +3,31 @@ import { Group } from "@components/Group";
 import { HomeHeader } from "@components/HomeHeader";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavegatorRoutesPropos } from "@routes/app.routes";
-import { FlatList, Heading, HStack, Text, VStack } from "native-base";
+import { AppErro } from "@utils/AppError";
+import { FlatList, Heading, HStack, Text, Toast, useToast, VStack } from "native-base";
 import { useState } from "react";
 
 export function Home() {
   const [group, setGroup] = useState(['Costas', 'Bíceps', 'Tríceps', 'ombro',])
   const [exercises, setExercises] = useState(['Puxada frontal', 'Remada curvada', 'Remada unilateral', 'Levantamento terra'])
   const [groupSelected, setGroupSelected] = useState('Costas')
+  const toast = useToast()
   const navegation = useNavigation<AppNavegatorRoutesPropos>()
-  function handleOptionExerciseDetails(){
+  function handleOptionExerciseDetails() {
     navegation.navigate('exercise')
+  }
+  async function fetchGroup() {
+    try {
+
+    } catch (error) {
+      const isAppError = error instanceof AppErro;
+      const title = isAppError ? error.menssage : 'Não foi possível carregar os groupos musculares'
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500'
+      })
+    }
   }
   return (
     <VStack flex={1}>
@@ -23,7 +38,7 @@ export function Home() {
         renderItem={({ item }) => (
           <Group
             name={item}
-            isActive={groupSelected.toUpperCase() ===  item.toUpperCase()}
+            isActive={groupSelected.toUpperCase() === item.toUpperCase()}
             onPress={() => setGroupSelected(item)}
           />
         )}
@@ -42,12 +57,12 @@ export function Home() {
           <Text color="gray.200" fontSize="sm">
             {exercises.length}
           </Text>
-        </HStack>        
+        </HStack>
         <FlatList
           data={exercises}
           keyExtractor={item => item}
           renderItem={({ item }) => (
-            <ExerciseCard 
+            <ExerciseCard
               onPress={handleOptionExerciseDetails}
             />
           )}
