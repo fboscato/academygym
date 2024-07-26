@@ -11,6 +11,8 @@ import { Controller, useForm } from "react-hook-form";
 import { useAuth } from "@hooks/useAuth";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { api } from "@services/api";
+import { AppErro } from "@utils/AppError";
 
 const PHOTO_SIZE = 33
 
@@ -88,8 +90,22 @@ export function Profile() {
   async function handleProfileUpdate(data: FormaDataProps) {
     try {
       setIsUpdating(true)
+      toast.show({
+        title: "Perfil atualizado com sucesso!",
+        placement: 'top',
+        bg: "green.500",
+      })
+      await api.put('/users', data)
     } catch (error) {
-      
+      const isAppError = error instanceof AppErro;
+      const title = isAppError ? error.menssage : 'Não foi possível atualizar os dados.'
+      toast.show({
+        title: title,
+        placement: 'top',
+        bg: "red.500",
+      })
+    } finally {
+      setIsUpdating(false)
     }
   }
   return (
@@ -198,6 +214,7 @@ export function Profile() {
             title="Atualizar"
             mt={4}
             onPress={handleSubmit(handleProfileUpdate)}
+            isLoading={isUpdating}
           />
         </Center>
       </ScrollView>
