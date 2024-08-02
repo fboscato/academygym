@@ -79,7 +79,25 @@ export function Profile() {
             bg: "red.500",
           })
         }
-        setUserPhoto(photoSelected.assets[0].uri)
+        const fileExtension = photoSelected.assets[0].uri.split('.').pop()
+        const photoFile = {
+          name: `${user.name}.${fileExtension}`.toLowerCase(),
+          uri: photoSelected.assets[0].uri,
+          type: `${photoSelected.assets[0].type}/${fileExtension}`,          
+        } as any
+        const userPhotoUploadForm = new FormData()
+        userPhotoUploadForm.append('avatar',photoFile)
+        console.log("userPhotoUploadForm",userPhotoUploadForm)
+        await api.patch('/users/avatar',userPhotoUploadForm,{
+          headers:{
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        toast.show({
+          title: "Foto atualizado",
+          placement: 'top',
+          bg: "green.500",
+        })
       }
     } catch (error) {
       console.log(error)
