@@ -13,6 +13,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { api } from "@services/api";
 import { AppErro } from "@utils/AppError";
+import defaultUserPhoto from "@assets/userPhotoDefault.png"
 
 const PHOTO_SIZE = 33
 
@@ -48,7 +49,7 @@ export function Profile() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
   const [userPhoto, setUserPhoto] = useState('http://github.com/fboscato.png')
   const toast = useToast()
-  const { user,updateUserProfile } = useAuth()
+  const { user, updateUserProfile } = useAuth()
   const { control, handleSubmit, formState: { errors } } = useForm<FormaDataProps>({
     defaultValues: {
       name: user.name,
@@ -83,16 +84,18 @@ export function Profile() {
         const photoFile = {
           name: `${user.name}.${fileExtension}`.toLowerCase(),
           uri: photoSelected.assets[0].uri,
-          type: `${photoSelected.assets[0].type}/${fileExtension}`,          
+          type: `${photoSelected.assets[0].type}/${fileExtension}`,
         } as any
         const userPhotoUploadForm = new FormData()
-        userPhotoUploadForm.append('avatar',photoFile)
-        console.log("userPhotoUploadForm",userPhotoUploadForm)
-        await api.patch('/users/avatar',userPhotoUploadForm,{
-          headers:{
+        userPhotoUploadForm.append('avatar', photoFile)
+        const avatarUpdateResponse = await api.patch('/users/avatar', userPhotoUploadForm, {
+          headers: {
             'Content-Type': 'multipart/form-data'
           }
         })
+        const userUpdate = user
+        userUpdate.avatar = avatarUpdateResponse.data.avatar
+        updateUserProfile(userUpdate)
         toast.show({
           title: "Foto atualizado",
           placement: 'top',
@@ -144,7 +147,7 @@ export function Profile() {
             />
             :
             <UserPhoto
-              source={{ uri: userPhoto }}
+              source={user.avatar ? { uri: `${api.defaults.baseURL}/avatar/${user.avatar}` } : defaultUserPhoto}
               alt="Foto usuario"
               size={PHOTO_SIZE}
             />
